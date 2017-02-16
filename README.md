@@ -18,7 +18,7 @@ creates the mex function `Process_SMOSxL1C.mexa64`
 
 ### from OCTAVE workspace:  ###
 
-      > mkfileobj Process_SMOSxL1C.cpp -lgsl -lgslcblas -lmatio  
+      > mkfileobj --mex Process_SMOSxL1C.cpp -lgsl -lgslcblas -lmatio  
 this creates the octave mex `function Process_SMOSxL1c.mex`  
 ### Makefile option ###
 Use the provided `Makefile` adapting the enviroment variable MATLABROOT or OCTAVEROOT with the path for matlab version installed in your system, e.g. MATLABROOT = /usr/local/matlab7.8/, then in linux console run:
