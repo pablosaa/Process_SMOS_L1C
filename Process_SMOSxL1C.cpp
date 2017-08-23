@@ -37,7 +37,7 @@
 // GEOLIMS: a 4 element vector as [LAT1, LON1, LAT2, LON2],
 // with elements indicating the latitude and longitude of bottom left
 // of box and latitude and longitude of upper rigth of box.
-// outdir: (optional) string with directory where filename.mat is stored. 
+// outdir: (optional) string with directory where filename.mat is stored.
 // USAGE 3:
 // > [TSF, SSI] = Process_SMOSxL1C('fname.DBL',GEO_LIMS);
 // same as usage #2, but an output .mat file will not be generated.
@@ -71,7 +71,7 @@
 // NOTE: The following three lines-block  [#define char16_t] to [#undef char16_t]
 // is a work-around for a problem during compilation error with c++11:
 // redeclaration of C++ built-in type ‘char16_t’,  typedef CHAR16_T char16_t;
-#define char16_t LIBRARY_char16_t 
+#define char16_t LIBRARY_char16_t
 #include <mex.h>
 #undef char16_t      // end of work-around char16_t.
 #include "mat.h"
@@ -92,7 +92,7 @@
 #define TBXX_MIN 50     // Minimum threshold for brigthness temperature [K]
 #define TBXX_MAX 500    // Maximum threshold for brigthness temperature [K]
 #define TH_RFI_ST4 50   // Threshould for 4-Stoke parameter Radio Frequency Interference
-#define CA_TBS1 5       // parameter A for equation 
+#define CA_TBS1 5       // parameter A for equation
 #define CB_TBS1 4       // parameter B for equation ST4-<ST4> = A + B
 #define INCA_INI 0      // initial incidence angle [deg]
 #define INCA_NUM 61     // number of incidence angles [deg] (e.g. 66 SMOS)
@@ -126,16 +126,16 @@ namespace smos{
       delete [] N_i; delete [] TBave; delete [] TB_i; delete [] theta;
     }
     double *deliver_it() {
-      for(k=0;k<Ninc;k++) TBave[k]=N_i[k]!=0?TB_i[k]/N_i[k]:MYNAN;
+      for(k=0;k<Ninc;++k) TBave[k]=N_i[k]!=0?TB_i[k]/N_i[k]:MYNAN;
       return(TBave);
     }
 
     void show_it(){
-      for(k=0;k<Ninc;k++)
+      for(k=0;k<Ninc;++k)
 	cout<<theta[k]<<" "<<TBave[k]<<";"<<endl;
     }
     void consider_it(double beta,double VARin){
-      for(k=0; k<Ninc; k++)
+      for(k=0; k<Ninc; ++k)
 	if(beta>=(theta[k]-Delta) && beta<(theta[k]+Delta) && VARin==VARin){
 	  // NOTE here that VARin==VARin is FALSE only when VARin=NAN
 	  TB_i[k] += VARin;
@@ -151,7 +151,7 @@ namespace smos{
       TBave = new double[Ninc];
       TB_i  = new double[Ninc];
       theta = new double[Ninc];
-      for(k=0;k<Ninc;k++){
+      for(k=0;k<Ninc;++k){
 	TBave[k]=0; TB_i[k]=0; N_i[k]=0;
 	theta[k]= (double) k*Step+Init;
       };
@@ -191,7 +191,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			      "GeometricRotation_angle","Snapshot_ID_Pixels",
 			      "Footprint_Axis1","Footprint_Axis2","TBxy","TBhv",
 			      "RA","idx_SnapshotID","TB_Fixed_IncAngle","Fixed_IncAngle"};
-  
+
   const unsigned N_field_name = sizeof(field_name)/sizeof(field_name[0]);
 
   // Following mex variables for the snapshot variables:
@@ -230,7 +230,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
   if(nlhs==1) smos::SSI_FLAG=false; else smos::SSI_FLAG=true;
 
   // Checking the input parameters:
-  if (nrhs>=0 && nrhs<4){ 
+  if (nrhs>=0 && nrhs<4){
     int FileLength;
 
     switch(nrhs){
@@ -243,7 +243,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	cout<<"% Output dir: "<<OUTDIR<<endl;
       }
       else mexErrMsgTxt("Third input needs to be a string PATH.");
-    
+
     case 2:
       // Second input: Box to extract [lat_min lon_min lat_max lon_max]
       if (mxIsNumeric(prhs[1]) && mxGetNumberOfElements(prhs[1])==4) {     // Getting the Lat, Lon boundaries:
@@ -359,7 +359,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
     mex_errflag  = mxCreateDoubleMatrix(Snapshot_Counter,4,mxREAL);
   }
 
-  for(i=0;i<Snapshot_Counter;i++){
+  for(i=0;i<Snapshot_Counter;++i){
     //Snapshot_Time[i] = new int[3];   // (0:days, 1:secods, 2:microseconds)
     // Radiometric_Accuracy[i] = new float[2];
     fp.read((char *) &Snapshot_Time[i][0], 3*sizeof(int));
@@ -438,7 +438,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 
   // Here start the reading of Snapshots:
   fp.read((char *) &Grid_Point_Counter, sizeof(Grid_Point_Counter));
-  
+
   // Creating mex variables for TempSwathFull output variable:
   mxArray *mex_gridid = mxCreateDoubleMatrix(Grid_Point_Counter,1,mxREAL);
   mxArray *mex_lat  = mxCreateDoubleMatrix(Grid_Point_Counter,1,mxREAL);
@@ -466,7 +466,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
   mxArray *mex_INCAdscr = mxCreateDoubleMatrix(INCA_NUM, 1, mxREAL);
 
   inn = 0;
-  for(i=0;i<Grid_Point_Counter;i++){
+  for(i=0;i<Grid_Point_Counter;++i){
 
     INMYBOX = false;   // it is set up to FALSE for every iteration
 
@@ -498,7 +498,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
       vec_idpix  = mxCreateDoubleMatrix(BT_Data_Counter,1,mxREAL);
       vec_foot1 = mxCreateDoubleMatrix(BT_Data_Counter,1,mxREAL);
       vec_foot2 = mxCreateDoubleMatrix(BT_Data_Counter,1,mxREAL);
-      vec_snapID= mxCreateDoubleMatrix(BT_Data_Counter,1,mxREAL);    
+      vec_snapID= mxCreateDoubleMatrix(BT_Data_Counter,1,mxREAL);
     }  // enf of INMYBOX 0 block
 
     // initializing variables for interpolation:
@@ -521,13 +521,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
     double RAyy_out[BT_Data_Counter];   //  = new double[BT_Data_Counter];
     double RAxy_out[BT_Data_Counter];   //  = new double[BT_Data_Counter];
     int Nxx=0, Nyy=0, Nxy=0;
-    
+
     double theta_inc[BT_Data_Counter];
     double A_vec[4], X_vec[STOKES_VEC];  // system: M*X = A --> X unknown.
     double alpha[BT_Data_Counter];;  // rotational angle
     double filter1_ax1ax2[BT_Data_Counter], filter2_ax1ax2[BT_Data_Counter], filter3_tbxtby;
 
-    for(j=0;j<BT_Data_Counter;j++){
+    for(j=0;j<BT_Data_Counter;++j){
       fp.read((char *) &Flags, sizeof(unsigned short int));
       fp.read((char *) &BT_Value_Real, sizeof(float));
       fp.read((char *) &BT_Value_Imag, sizeof(float));
@@ -538,7 +538,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
       fp.read((char *) &Geometric_Rotation_Angle, sizeof(unsigned short int));
       fp.read((char *) &Snapshot_ID_of_Pixel, sizeof(unsigned int));
       fp.read((char *) &Footprint_Axis1, sizeof(unsigned short int));
-      fp.read((char *) &Footprint_Axis2, sizeof(unsigned short int));	 
+      fp.read((char *) &Footprint_Axis2, sizeof(unsigned short int));
       // Quality Control Checking:
       if (Flags&0x80) continue;   // SUN_POINT flag 8th bit=1, pixel degraded
       // criteria to filter based on footprint spatial resolution requirements,
@@ -597,7 +597,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	*(mxGetPr(vec_foot2)+j)  = Footprint_Axis2*PIX_FOOTP_SC;
 	alpha[j] = (Faraday_Rotation_Angle + Geometric_Rotation_Angle)*FAKRAD;
 	if(CREATOR_VER<344) alpha[j] += -2*Faraday_Rotation_Angle*FAKRAD; //old version
-	
+
       } // end of INMYBOX block
     }   // end of BT_Data_Counter block (j index)
 
@@ -605,7 +605,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 
       // Here local variables for TB with incident angle discrete:
       // with c++11 TB_dscr may be initialized as {{init,step,Ndcsr},{},...};
-      smos::Be_Discrete TB_dscr[STOKES_VEC]; //={{0,1,46},{0,1,46},{0,1,46},{0,1,46}}; 
+      smos::Be_Discrete TB_dscr[STOKES_VEC]; //={{0,1,46},{0,1,46},{0,1,46},{0,1,46}};
       int Ndscr = INCA_NUM;   // default SMOS spec. from 0 to 65 deg (66 angles).
 
       memcpy(mxGetPr(mex_INCAdscr), TB_dscr[0].theta,Ndscr*sizeof(double));
@@ -630,7 +630,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
       // calculating the average of the halved 1st Stokes parameter <ST1>:
       float aveST1;
       int k;
-      for(j=0, k=0, aveST1=0;j<BT_Data_Counter;j++){
+      for(j=0, k=0, aveST1=0;j<BT_Data_Counter;++j){
 	if(std::isnan(BTxx_out[j]) || std::isnan(BTyy_out[j])) continue;
 	aveST1 += 0.5*(BTxx_out[j]+BTyy_out[j]);
 	k++;
@@ -638,11 +638,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
       aveST1 /= k;
 
       // **** Rotation matrix:
-      for(j=0;j<BT_Data_Counter;j++){
-	
+      for(j=0;j<BT_Data_Counter;++j){
+
 	// *** Here all filetering criteria ST4_RFI, ST1 and FootPrint:
 	bool AX1AX2 = false, TBXTBY = false, RFI_ST1 = false;
-	
+
 	if(filter1_ax1ax2[j]>TH_ELON || filter2_ax1ax2[j]>TH_SIZE) AX1AX2 = true;
 	filter3_tbxtby = sqrt(BTxx_out[j]*BTxx_out[j]+BTyy_out[j]*BTyy_out[j]);
 	if(filter3_tbxtby<TBXX_MIN || filter3_tbxtby>TBXX_MAX) TBXTBY=true;
@@ -656,10 +656,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	  smos::MxTrans_XY2HV(alpha[j], A_vec, X_vec, STOKES_VEC, false); // rotation
 	}
 	else {
-	  for(unsigned k1=0; k1<STOKES_VEC; k1++) X_vec[k1] = MYNAN;
+	  for(unsigned k1=0; k1<STOKES_VEC; ++k1) X_vec[k1] = MYNAN;
 	}
 
-	for(unsigned k1=0; k1<STOKES_VEC; k1++){
+	for(unsigned k1=0; k1<STOKES_VEC; ++k1){
 	  // Feeding the "Be_Discrete" class type variables:
 	  TB_dscr[k1].consider_it(theta_inc[j], X_vec[k1]);
 	  // filling the HV output to mex matrix:
@@ -682,10 +682,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	  smos::MxTrans_XY2HV(alpha[j], A_vec, X_vec, STOKES_VEC, true);
 	}
 	else {
-	  for(unsigned k1=0; k1<STOKES_VEC; k1++) X_vec[k1] = MYNAN;
+	  for(unsigned k1=0; k1<STOKES_VEC; ++k1) X_vec[k1] = MYNAN;
 	}
 	// filling the Radiometric accuracy HV to mex matrix:
-	for(unsigned k1=0; k1<STOKES_VEC; k1++)
+	for(unsigned k1=0; k1<STOKES_VEC; ++k1)
 	  *(mxGetPr(vec_RA)+j+k1*BT_Data_Counter) = X_vec[k1];
 	// *(mxGetPr(vec_RA)+j+BT_Data_Counter)   = X_vec[1];
 	// *(mxGetPr(vec_RA)+j+2*BT_Data_Counter) = X_vec[2];
@@ -694,10 +694,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 
       // Feeding matrix with the TBs discrete incidence angle:
       // inn: snapshot index, Ndscr: # of angles, STOKES_VEC: dimensions
-      unsigned k0  = inn*Ndscr*STOKES_VEC;  
+      unsigned k0  = inn*Ndscr*STOKES_VEC;
       for(unsigned k1 = 0; k1<STOKES_VEC; k0 = ++k1*Ndscr+inn*Ndscr*STOKES_VEC)
 	memcpy((void *) (mat_TBdscr+k0), TB_dscr[k1].deliver_it(),Ndscr*sizeof(double));
-      
+
       // Populating the mex vector variables:
       memcpy(mxGetPr(vec_BTxy), BTxx_out, BT_Data_Counter*sizeof(double));
       memcpy(mxGetPr(vec_BTxy)+BT_Data_Counter, BTyy_out, BT_Data_Counter*sizeof(double));
@@ -713,7 +713,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
       *(mxGetPr(mex_alt)+inn) = Grid_Point_Altitude;
       *(mxGetPr(mex_mask)+inn) = Grid_Point_Mask;
       *(mxGetPr(mex_BT_Counter)+inn) = BT_Data_Counter;
-      
+
       // Populating the mex cell variables
       mxSetCell(mex_flag, inn, vec_flag);
       mxSetCell(mex_BT_re, inn, vec_BTre);
@@ -738,12 +738,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
   fp.close();
 
   // --- Assigning output variables:
-  
+
   // Setting MATLAB workspace variable mexFile_Name with info for DBL file name:
   mxArray *mexFile_Name = mxCreateString(WhatPol.substr(WhatPol.find_last_of("/")+1).c_str());
 
   mxArray *mex_boxlim = mxCreateDoubleMatrix(2,2,mxREAL);
-  for(i=0;i<4;i++) *(mxGetPr(mex_boxlim)+i) = BOXLIM[i];
+  for(i=0;i<4;++i) *(mxGetPr(mex_boxlim)+i) = BOXLIM[i];
 
   int idx_snap = distance(Snapshot_ID,
 			  find(Snapshot_ID,Snapshot_ID+Snapshot_Counter,
@@ -787,11 +787,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
   mxArray *mex_TBdscr = mxCreateNumericArray(3,dims3d,mxDOUBLE_CLASS,mxREAL);
 
   // Arranging mat_TBdscr array to dimensions {NUM_DATA, INC_ANGLE, POLARIZATION}
-  for(unsigned k1=0,idat=0;k1<STOKES_VEC;k1++)
-    for(unsigned k2=0;k2<INCA_NUM; k2++)
+  for(unsigned k1=0,idat=0;k1<STOKES_VEC;++k1)
+    for(unsigned k2=0;k2<INCA_NUM; ++k2)
       for(unsigned k3=0;k3<inn;k3++,	idat++)
   	*(mxGetPr(mex_TBdscr)+idat) = mat_TBdscr[k1*INCA_NUM+k2+k3*(STOKES_VEC*INCA_NUM)];
-	
+
   // deleting the temporal variable mat_TBdscr:
   delete[] mat_TBdscr;
   // ---
@@ -830,7 +830,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
   SnapShotInfo = mxCreateStructArray(2, dims, N_snapsh_name, snapsh_name);
   if (smos::SSI_FLAG){
     mxSetField(SnapShotInfo,0,"Snapshot_Time",mex_snaptime);
-    mxSetField(SnapShotInfo,0,"Snapshot_ID",mex_snapid);    
+    mxSetField(SnapShotInfo,0,"Snapshot_ID",mex_snapid);
     mxSetField(SnapShotInfo,0,"Snapshot_OBET",mex_snapobet);
     mxSetField(SnapShotInfo,0,"XYZ_Position",mex_xyzpo);
     mxSetField(SnapShotInfo,0,"XYZ_Velocity",mex_xyzve);
@@ -844,13 +844,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
     mxSetField(SnapShotInfo,0,"XBand",mex_xband);
     mxSetField(SnapShotInfo,0,"SIAC_Error_flag",mex_errflag);
   }
-  
+
   // ***********************************************************
   // IF output directory included, creating MAT file:
   if(nrhs==3 && inn!=0){
     if(smos::CreateMAToutput(TempSwathFull,SnapShotInfo, OUTDIR, filen)==0)
       mexErrMsgTxt("Output MAT file could not be created!.");
-  }  // end block creating MAT file 
+  }  // end block creating MAT file
 
   // ***********************************************
   // Returning Variables to MATLAB workspace
@@ -874,7 +874,7 @@ namespace smos{
   // ----------------------------------------------------------
   // Routine to:
   // 1) open a GUI file browser to select a DBL input file
-  // to work with. 
+  // to work with.
   // 2) open a GUI input dialog to write the minimum and maximum
   // Latitude-Longitude pairs to select from the DBL input file.
   // ARGUMENTS:
@@ -917,16 +917,16 @@ namespace smos{
     mxSetCell(prompt,1,mxCreateString("Longitude bottom left [-180:+180]"));
     mxSetCell(prompt,2,mxCreateString("Latitude upper rigth [-90:+90]"));
     mxSetCell(prompt,3,mxCreateString("Longitude upper rigth [-180:+180]"));
-  
+
     mxSetCell(defaultanswer,0,mxCreateString("-90"));
     mxSetCell(defaultanswer,1,mxCreateString("-180"));
     mxSetCell(defaultanswer,2,mxCreateString("90"));
     mxSetCell(defaultanswer,3,mxCreateString("180"));
-  
+
     status = mexCallMATLAB(1,&OUTbox,5,(mxArray **) INOPTS,"inputdlg");
     if (status!=0) mexErrMsgTxt("(Lat,Lon) Limits selection wrong!");
 
-    for(int i=0;i<4;i++){
+    for(int i=0;i<4;++i){
       strLength = mxGetN(mxGetCell(OUTbox,i))+1;
       mxGetString(mxGetCell(OUTbox,i),temp_str,strLength);
       BOXLIM[i]=atof(temp_str);
@@ -938,10 +938,10 @@ namespace smos{
     cout<<"Latitude upper rigth [-90:+90]   : "; cin>>BOXLIM[2];
     cout<<"Longitude upper rigth [-180:+180]: "; cin>>BOXLIM[3];
 #endif
-    if(BOXLIM[0]>BOXLIM[2] || BOXLIM[1]>BOXLIM[3] || 
-       (BOXLIM[0]<-90 || BOXLIM[0]>90) || 
-       (BOXLIM[2]<-90 || BOXLIM[2]>90) || 
-       (BOXLIM[1]<-180 || BOXLIM[1]>180) || 
+    if(BOXLIM[0]>BOXLIM[2] || BOXLIM[1]>BOXLIM[3] ||
+       (BOXLIM[0]<-90 || BOXLIM[0]>90) ||
+       (BOXLIM[2]<-90 || BOXLIM[2]>90) ||
+       (BOXLIM[1]<-180 || BOXLIM[1]>180) ||
        (BOXLIM[3]<-180 || BOXLIM[3]>180)){
       mexPrintf("Wrong set of min-max parameters (%5.1f,%5.1f) - (%5.1f,%5.1f)\n",
 		BOXLIM[0],BOXLIM[1],BOXLIM[2],BOXLIM[3]);
@@ -964,12 +964,12 @@ namespace smos{
 
     int i,k;
     // Interpolation attempt only when input has more than 6 points!
-    if(Ni<7) for(i=0,k=0;i<No;i++) Yo[i] = Xi[k]==Xo[i] ? Yi[k++] : MYNAN;
+    if(Ni<7) for(i=0,k=0;i<No;++i) Yo[i] = Xi[k]==Xo[i] ? Yi[k++] : MYNAN;
     else{
       gsl_interp_accel *acc = gsl_interp_accel_alloc ();
       gsl_interp *inter = gsl_interp_alloc (gsl_interp_linear, Ni); //cspline, Ni);
       gsl_interp_init(inter, Xi, Yi, Ni);
-      for(i=0;i<No;i++){
+      for(i=0;i<No;++i){
 	if(Xo[i]>=Xi[0] && Xo[i]<=Xi[Ni-1])
 	  Yo[i] = gsl_interp_eval(inter,Xi,Yi, Xo[i], acc);
 	else Yo[i]=MYNAN;
@@ -1009,7 +1009,7 @@ namespace smos{
     gsl_vector_view b = gsl_vector_view_array (A, N);
 
     gsl_vector *x = gsl_vector_alloc(N);
-  
+
     int s;
 
     gsl_permutation * p = gsl_permutation_alloc (N);
@@ -1020,14 +1020,14 @@ namespace smos{
       double MR4_inv[N*N];
       gsl_matrix_view m_inv = gsl_matrix_view_array(MR4_inv,N,N);
       gsl_linalg_LU_invert (&m.matrix, p, &m_inv.matrix);
-      for(int k=0;k<N*N;k++) MR4_inv[k] = fabs(MR4_inv[k]);
+      for(int k=0;k<N*N;++k) MR4_inv[k] = fabs(MR4_inv[k]);
       // solving system M*X=b as X=abs(inv(M))*B
       gsl_blas_dgemv (CblasNoTrans, 1.0, &m_inv.matrix, &b.vector,0.0, x);
     }
     else
       gsl_linalg_LU_solve (&m.matrix, p, &b.vector, x);
 
-    for(int i=0; i<N; i++) Xout[i] = gsl_vector_get(x,i);
+    for(int i=0; i<N; ++i) Xout[i] = gsl_vector_get(x,i);
 
     gsl_permutation_free (p);
     gsl_vector_free (x);
@@ -1043,7 +1043,7 @@ namespace smos{
   // USAGE: value = getHDR_fields(DBL_filename,Fiels);
   float getHDR_fields(const char filename[], const char subtxt[]){
     ifstream file;
-    string str; 
+    string str;
     string txt = subtxt;
     string txt_0 = "<"+txt+">";
     string txt_1 = "</"+txt+">";
@@ -1094,7 +1094,7 @@ namespace smos{
     // making up the output file with outdir
     int FileLength = sizeof(OUTDIR)-2;
     if(OUTDIR[FileLength] != '/') strcat(OUTDIR,"/");
-  
+
     string mat_file=filen;
     int bslash=mat_file.find_last_of("/");
     mat_file.replace(0,bslash+1,OUTDIR);
@@ -1160,7 +1160,7 @@ namespace smos{
     // Getting the elements of Structure input and Field Names:
     unsigned nF = mxGetNumberOfFields(TSF);
     const char *MyNameField[nF];
-    for(unsigned k=0;k<nF;k++) MyNameField[k] = mxGetFieldNameByNumber(TSF,k);
+    for(unsigned k=0;k<nF;++k) MyNameField[k] = mxGetFieldNameByNumber(TSF,k);
 
     structTSF = Mat_VarCreateStruct(var_name,2,struct_dims,MyNameField,nF);
     if (NULL == structTSF) {
@@ -1170,8 +1170,8 @@ namespace smos{
     }
 
     // the matrices are easy to convert
-  
-    for(unsigned k=0; k<nF; k++){
+
+    for(unsigned k=0; k<nF; ++k){
       matvar_t *field;
       mxArray *temp = mxGetField(TSF,0,MyNameField[k]);
       mxClassID TempClass = mxGetClassID(temp);
@@ -1179,7 +1179,7 @@ namespace smos{
       mwSize Nodims = mxGetNumberOfDimensions(temp);
       size_t dims[Nodims];
 
-      for(int j=0; j<Nodims; j++) dims[j] = *(Tempdims+j);
+      for(int j=0; j<Nodims; ++j) dims[j] = *(Tempdims+j);
 
       switch (TempClass){
       case mxCHAR_CLASS:
@@ -1209,7 +1209,7 @@ namespace smos{
 	  return(NULL);
 	}
 	else{
-	  for(unsigned j=0; j<dims[0];j++){
+	  for(unsigned j=0; j<dims[0];++j){
 	    mxArray *TempCell = mxGetCell(temp,j);
 	    size_t Eledims[2];
 	    Eledims[0] = mxGetM(TempCell);
@@ -1224,9 +1224,9 @@ namespace smos{
 	  mexWarnMsgTxt("Structure variable not identified!");
 	  field = NULL;
 	}
-      }  // end of switch 
+      }  // end of switch
       Mat_VarSetStructFieldByName(structTSF,MyNameField[k],0,field);
-    
+
     } // end over loop number of variables in structure
 
     return(structTSF);
@@ -1236,7 +1236,7 @@ namespace smos{
   // *********************************************************
   // Converting the EE CFI time format to a string time format
   // with (ISO 8601)  'yyyymmddTHH:MM:SS'  e.g. 20040509T15:45:17
-  // In EE CFI, days count begins on the 1st of January 2000 AD, while 
+  // In EE CFI, days count begins on the 1st of January 2000 AD, while
   // seconds are relative to time for current day in UTC.
   int TimeEEC2date(int ee_cfi[], char smos_date[]){
 
@@ -1245,7 +1245,7 @@ namespace smos{
 
     smos_sec = ee_cfi[0]*60*60*24+ee_cfi[1];  //microsec are not considered
 
-    //Seting up the EE CFI initial date: 
+    //Seting up the EE CFI initial date:
     y2k.tm_hour = 0; y2k.tm_min = 0; y2k.tm_sec = smos_sec;
     y2k.tm_year = 100;   // 2000 = 1900 + 100
     y2k.tm_mon = 0; y2k.tm_mday = 1; y2k.tm_isdst = -1;
