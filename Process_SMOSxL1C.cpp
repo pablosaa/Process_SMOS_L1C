@@ -114,30 +114,35 @@ namespace smos{
 
   public:
     double *theta;
+    // default creator for Be_Discrete class:
     Be_Discrete () : Ninc(INCA_NUM),
       Init(INCA_INI), Step(INCA_DEL) {
       initialize_it();
     }
+    // creator for Be_Discrete class with parameters:
     Be_Discrete (int I, int S, int N) : Ninc(N),
       Init(I), Step(S) {
       initialize_it();
     }
+    // destroyer for Be_Discrete:
     ~Be_Discrete () {
       delete [] N_i; delete [] TBave; delete [] TB_i; delete [] theta;
     }
+    // return the average Brightness temperature within the inc_angle interval:
     double *deliver_it() {
       for(k=0;k<Ninc;++k) TBave[k]=N_i[k]!=0?TB_i[k]/N_i[k]:MYNAN;
       return(TBave);
     }
-
+    // shows the results of the discretization:
     void show_it(){
       for(k=0;k<Ninc;++k)
 	cout<<theta[k]<<" "<<TBave[k]<<";"<<endl;
     }
+    // take a incidence angle and its TB to include in the discretization:
     void consider_it(double beta,double VARin){
       for(k=0; k<Ninc; ++k)
 	if(beta>=(theta[k]-Delta) && beta<(theta[k]+Delta) && VARin==VARin){
-	  // NOTE here that VARin==VARin is FALSE only when VARin=NAN
+	  // NOTE here that VARin==VARin is FALSE only when VARin=NaN
 	  TB_i[k] += VARin;
 	  N_i[k]++;
 	}
