@@ -71,9 +71,9 @@
 // NOTE: The following three lines-block  [#define char16_t] to [#undef char16_t]
 // is a work-around for a problem during compilation error with c++11:
 // redeclaration of C++ built-in type ‘char16_t’,  typedef CHAR16_T char16_t;
-#define char16_t LIBRARY_char16_t
+///#define char16_t LIBRARY_char16_t
 #include <mex.h>
-#undef char16_t      // end of work-around char16_t.
+///#undef char16_t      // end of work-around char16_t.
 #include "mat.h"
 #define MYNAN mxGetNaN()
 #else
@@ -897,6 +897,7 @@ namespace smos{
     if (status!=0) mexErrMsgTxt("File selection not possible!");
     // passing the input and output path
     strLength = mxGetN(OUTVAR[0])+mxGetN(OUTVAR[1])+1;
+    if (strLength<4)  mexErrMsgTxt("File selection empty or  canceled!");
     filen = (char *) mxCalloc(strLength, sizeof(char));
     mxGetString(OUTVAR[1],filen,strLength);
     // passing the file name
@@ -930,7 +931,7 @@ namespace smos{
 
     status = mexCallMATLAB(1,&OUTbox,5,(mxArray **) INOPTS,"inputdlg");
     if (status!=0) mexErrMsgTxt("(Lat,Lon) Limits selection wrong!");
-
+    if (mxIsEmpty(OUTbox)) mexErrMsgTxt("(Lat,Lon) Limits selection empty!");
     for(int i=0;i<4;++i){
       strLength = mxGetN(mxGetCell(OUTbox,i))+1;
       mxGetString(mxGetCell(OUTbox,i),temp_str,strLength);
@@ -1299,6 +1300,7 @@ namespace smos{
     mexPrintf("This program comes with ABSOLUTELY NO WARRANTY; for details see GNUPLv3 `LICENCE'.\n");
     mexPrintf("This is free software, and you are welcome to redistribute it\n");
     mexPrintf("under certain conditions; see GNUPLv3 `LICENCE' or <http://www.gnu.org/licenses/> for details.\n");
+    mexPrintf("\n");
     return;
   }
 

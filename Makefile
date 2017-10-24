@@ -9,6 +9,7 @@ ifeq ($(HOST),mysu.yolle)
 	MATLABROOT = /usr/local/MATLAB/R2010b
 else
 	MATLABROOT = /usr/local/matlab7.8
+#	MATLABROOT = /usr/local/matlab9.1
 endif
 
 # General Options to pass to the compiler defined in CFLAGS
