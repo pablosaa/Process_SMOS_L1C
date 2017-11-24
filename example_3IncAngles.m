@@ -13,10 +13,10 @@ lonlim = lat_lon_box([2,4]);
 % selecting DBL file to process and plot:
 file_example = ['SM_OPER_MIR_SCLF1C_20150702T042618_20150702T051937_620_001_1.DBL'];
 if exist(file_example,'file'),
-  TSI = Process_SMOSxL1C(file_example,lat_lon_box);  % no MAT-file output!
+  TSF = Process_SMOSxL1C(file_example,lat_lon_box);  % no MAT-file output!
 else
   % Open file browser GUI:
-  TSI = Process_SMOSxL1C;
+  TSF = Process_SMOSxL1C;
 end
 
 idx_pol =1; % 1 for H, 2 for V
