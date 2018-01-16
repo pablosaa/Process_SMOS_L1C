@@ -907,15 +907,22 @@ namespace smos{
     OUTDIR = (char *) mxCalloc(strLength,sizeof(char));
     mxGetString(OUTVAR[1], OUTDIR, strLength);
     mexPrintf("DBL file chosen: %s\n",filen);
-#ifdef MATLAB_MEX_FILE
+
     // Getting the Latitude and Longitude Box limits:
     mxArray *OUTbox=mxCreateCellMatrix(1,4);
     mxArray *prompt = mxCreateCellMatrix(1,4);
     const mxArray *name    = mxCreateString("Lat-Lon BOX Limits");
     const mxArray *numlines = mxCreateDoubleMatrix(1,1,mxREAL);
     mxArray *defaultanswer = mxCreateCellMatrix(1,4);
+
+#ifdef MATLAB_MEX_FILE
+    const int Narg = 5;
     const mxArray *option = mxCreateString("on");
-    const mxArray *INOPTS[5] = {prompt,name,numlines,defaultanswer,option};
+    const mxArray *INOPTS[Narg] = {prompt,name,numlines,defaultanswer,option};
+#else
+    const int Narg = 4;
+    const mxArray *INOPTS[Narg] = {prompt,name,numlines,defaultanswer};
+#endif
     char temp_str[4];
 
     *mxGetPr(numlines) = 1;
@@ -926,10 +933,10 @@ namespace smos{
 
     mxSetCell(defaultanswer,0,mxCreateString("-90"));
     mxSetCell(defaultanswer,1,mxCreateString("-180"));
-    mxSetCell(defaultanswer,2,mxCreateString("90"));
-    mxSetCell(defaultanswer,3,mxCreateString("180"));
+    mxSetCell(defaultanswer,2,mxCreateString("+90"));
+    mxSetCell(defaultanswer,3,mxCreateString("+180"));
 
-    status = mexCallMATLAB(1,&OUTbox,5,(mxArray **) INOPTS,"inputdlg");
+    status = mexCallMATLAB(1,&OUTbox,(int) Narg,(mxArray **) INOPTS,"inputdlg");
     if (status!=0) mexErrMsgTxt("(Lat,Lon) Limits selection wrong!");
     if (mxIsEmpty(OUTbox)) mexErrMsgTxt("(Lat,Lon) Limits selection empty!");
     for(int i=0;i<4;++i){
@@ -937,13 +944,13 @@ namespace smos{
       mxGetString(mxGetCell(OUTbox,i),temp_str,strLength);
       BOXLIM[i]=atof(temp_str);
     }
-#else
-    cout<<"Please introduce Lat-Lon BOX Limits"<<endl;
-    cout<<"Latitude bottom left [-90:+90]   : "; cin>>BOXLIM[0];
-    cout<<"Longitude bottom left [-180:+180]: "; cin>>BOXLIM[1];
-    cout<<"Latitude upper rigth [-90:+90]   : "; cin>>BOXLIM[2];
-    cout<<"Longitude upper rigth [-180:+180]: "; cin>>BOXLIM[3];
-#endif
+// #else
+//     cout<<"Please introduce Lat-Lon BOX Limits"<<endl;
+//     cout<<"Latitude bottom left [-90:+90]   : "; cin>>BOXLIM[0];
+//     cout<<"Longitude bottom left [-180:+180]: "; cin>>BOXLIM[1];
+//     cout<<"Latitude upper rigth [-90:+90]   : "; cin>>BOXLIM[2];
+//     cout<<"Longitude upper rigth [-180:+180]: "; cin>>BOXLIM[3];
+// #endif
     if(BOXLIM[0]>BOXLIM[2] || BOXLIM[1]>BOXLIM[3] ||
        (BOXLIM[0]<-90 || BOXLIM[0]>90) ||
        (BOXLIM[2]<-90 || BOXLIM[2]>90) ||
