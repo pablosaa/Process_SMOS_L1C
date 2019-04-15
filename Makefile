@@ -8,7 +8,9 @@ HOST = $(shell hostname)
 ifeq ($(HOST),mysu.yolle)
 	MATLABROOT = /usr/local/MATLAB/R2010b
 else
-	MATLABROOT = /usr/local/matlab7.8
+# Uncomment one of the following location for your system and MATLAB installation
+	MATLABROOT = /usr/local/MATLAB/R2018a/
+#	MATLABROOT = /usr/local/matlab7.8
 #	MATLABROOT = /usr/local/matlab9.1
 endif
 
